@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "composer" # Composer is used for PHP dependencies
+    directory: "/" # Location of the composer.json file (usually in the root)
+    open-pull-requests-limit: 10 # Limit the number of open PRs
+    schedule:
+      interval: "daily" # Check for updates daily
+    labels: # Optional: Add labels to PRs created by Dependabot
+      - "dependencies"
+      - "php"
+    ignore: # Optional: Ignore specific packages or versions
+      - dependency-name: "php"
+        versions: ["8.3.*"] # Example: Ignore PHP 8.3 updates
+      - dependency-name: "laravel/framework"
+        versions: ["11.*"] # Example: Ignore Laravel 11 updates (if you want to stay on a specific version)
