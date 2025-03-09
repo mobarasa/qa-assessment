@@ -87,17 +87,17 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Install Newman (Postman CLI)
-              run: npm install -g newman
+            - name: Install Newman and HTML Reporter
+              run: npm install -g newman newman-reporter-htmlextra
 
-            - name: Run API Tests with Newman
-              run: newman run postman/collection.json --reporters cli,json --reporter-json-export postman-report.json
+            - name: Run API Tests with Newman and Generate HTML Report
+              run: newman run postman/collection.json --reporters cli,htmlextra --reporter-htmlextra-export postman-report.html
 
-            - name: Upload API Test Report
+            - name: Upload API Test Report (HTML)
               uses: actions/upload-artifact@v4
               with:
-                  name: postman-report
-                  path: postman-report.json
+                  name: postman-html-report
+                  path: postman-report.html
 
     load-tests:
         runs-on: ubuntu-latest
