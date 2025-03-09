@@ -125,8 +125,10 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Install Playwright
-              run: npm install -D @playwright/test && npx playwright install
+            - name: Install Playwright and dependencies
+              run: |
+                npm install -D @playwright/test
+                npx playwright install --with-deps webkit
 
             - name: Run Playwright E2E Tests
               run: npx playwright test
