@@ -1,0 +1,69 @@
+{
+    "info": {
+      "_postman_id": "abcd1234-efgh-5678-ijkl-9012mnop3456",
+      "name": "JSONPlaceholder API Tests",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "GET Users",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/users",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["users"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "pm.test(\"Users list is not empty\", function () {",
+                "    let jsonData = pm.response.json();",
+                "    pm.expect(jsonData.length).to.be.above(0);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      },
+      {
+        "name": "GET Albums",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/albums",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["albums"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "pm.test(\"Albums list is not empty\", function () {",
+                "    let jsonData = pm.response.json();",
+                "    pm.expect(jsonData.length).to.be.above(0);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      }
+    ]
+  }

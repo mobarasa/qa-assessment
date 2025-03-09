@@ -1,0 +1,14 @@
+<TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="JSONPlaceholder Load Test" enabled="true">
+  <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Load Test Users API" enabled="true">
+    <stringProp name="ThreadGroup.num_threads">100</stringProp>
+    <stringProp name="ThreadGroup.ramp_time">10</stringProp>
+    <stringProp name="ThreadGroup.duration">60</stringProp>
+    <boolProp name="ThreadGroup.scheduler">false</boolProp>
+  </ThreadGroup>
+  <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Fetch Users" enabled="true">
+    <stringProp name="HTTPSampler.domain">jsonplaceholder.typicode.com</stringProp>
+    <stringProp name="HTTPSampler.path">/users</stringProp>
+    <stringProp name="HTTPSampler.method">GET</stringProp>
+  </HTTPSamplerProxy>
+  <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true"/>
+</TestPlan>
