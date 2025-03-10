@@ -1,50 +1,58 @@
-# 🐞 Bug Reports
+# Bug Report
 
-## 🔹 Bug #1: Login Page Refreshes Without Logging In
-- **Issue ID:** BUG-001
-- **Module:** Authentication
-- **Severity:** High
-- **Priority:** High
-- **Steps to Reproduce:**
-  1. Navigate to the login page
-  2. Enter valid credentials
-  3. Click the "Login" button
-- **Expected Result:** User is logged in and redirected to the dashboard
-- **Actual Result:** The page refreshes without logging in
-- **Attachments:** [Screenshot]
-- **Status:** Open
-- **Assigned To:**
+This document provides a detailed description of a bug discovered during manual testing of the web application.
 
 ---
 
-## 🔹 Bug #2: Search Functionality Not Returning Correct Results
-- **Issue ID:** BUG-002
-- **Module:** Search
-- **Severity:** Medium
-- **Priority:** Medium
-- **Steps to Reproduce:**
-  1. Navigate to the users page
-  2. Enter a valid search term
-  3. Click "Search"
-- **Expected Result:** Only relevant users are displayed
-- **Actual Result:** Irrelevant users appear in the results
-- **Attachments:** [Screenshot]
-- **Status:** Open
-- **Assigned To:**
+## **Bug Details**
+
+| **Field**               | **Details**                                                                 |
+|-------------------------|-----------------------------------------------------------------------------|
+| **Bug ID**              | BUG_LOGIN_01                                                               |
+| **Title**               | Login fails: Page refreshes after entering valid credentials                |
+| **Severity**            | High                                                                       |
+| **Priority**            | High                                                                       |
+| **Reported By**         | Michael Barasa                                                             |
+| **Reported Date**       | 10/03/2025                                                                 |
+| **Environment**         | Browser: Chrome v117, OS: Windows 10                                       |
+| **Build Version**       | v1.0.0                                                                     |
+| **Category**            | Authentication                                                             |
+| **Status**              | Open                                                                       |
+| **Assigned To**         | John Doe                                                                   |
 
 ---
 
-## 🔹 Bug #3: Album List Page Takes Too Long to Load
-- **Issue ID:** BUG-003
-- **Module:** Albums
-- **Severity:** Medium
-- **Priority:** Low
-- **Steps to Reproduce:**
-  1. Navigate to the albums page
-- **Expected Result:** Albums list loads within 2 seconds
-- **Actual Result:** Page takes over 10 seconds to load
-- **Attachments:** [Performance Logs]
-- **Status:** Open
-- **Assigned To:**
+## **Description**
+When a user enters valid credentials on the Login page and clicks the "Login" button, the page refreshes instead of logging the user in and redirecting them to the Home page. This issue prevents users from accessing authenticated pages and impacts the core functionality of the application.
 
 ---
+
+## **Steps to Reproduce**
+1. Navigate to the Login page.
+2. Enter valid credentials:
+   - Username: `testuser`
+   - Password: `testpassword`
+3. Click the "Login" button.
+
+---
+
+## **Expected Result**
+- The user should be authenticated successfully.
+- The user should be redirected to the Home page.
+- The authenticated navigation menu (Home, User, Album, Photo) should be accessible.
+
+---
+
+## **Actual Result**
+- The page refreshes, and the user remains on the Login page.
+- No error message is displayed.
+- The user is not logged in, and authenticated pages remain inaccessible.
+
+---
+
+## **Attachments**
+1. **Screenshot 1:** Login page before clicking "Login."
+   ![Login Page Before](screenshots/login_before.png)
+2. **Screenshot 2:** Login page after clicking "Login."
+   ![Login Page After](screenshots/login_after.png)
+3. **Console Logs:** Errors or warnings in the browser console.
