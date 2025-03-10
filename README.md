@@ -1,7 +1,7 @@
 # 🚀 Quality Assurance Engineer Assessment
 
 ## 📌 Project Overview
-This project is a web application built with **Laravel 11** and **Vue 3 (Inertia.js)**, consuming data from [JSONPlaceholder](https://jsonplaceholder.typicode.com/). The system includes authentication and allows users to:
+This project is a web application built with **Laravel 12** and **Vue 3 (Inertia.js)**, consuming data from [JSONPlaceholder](https://jsonplaceholder.typicode.com/). The system includes authentication and allows users to:
 - View, search, and paginate **Users, Albums, and Photos**
 - Perform API testing, automation, and load testing using **Postman, JMeter, Playwright, and GitHub Actions**
 
@@ -55,12 +55,12 @@ php artisan serve
 ## 🚀 API Testing (Postman)
 ### 📥 Import the Postman Collection
 1. Open **Postman**
-2. Click **Import** and select `postman_collection.json`
+2. Click **Import** and select `postman/collection.json`
 3. Run the **API Tests**
 
 ### ✅ Run Postman Tests via CLI (Newman)
 ```sh
-newman run postman_collection.json --reporters cli
+newman run postman/collection.json --reporters cli
 ```
 
 ---
@@ -68,7 +68,7 @@ newman run postman_collection.json --reporters cli
 ## 🔥 Load Testing (JMeter)
 ### 📥 Run JMeter Load Tests
 ```sh
-jmeter -n -t jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
+jmeter -n -t jmeter/jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
 ```
 ### 📊 Performance Metrics:
 - **Response Time:** Time taken per request
@@ -112,8 +112,8 @@ npx playwright show-report
 ---
 
 ## 📜 Test Cases & Reports
-- **Test Cases:** Documented in `test-cases.md`
-- **Bug Reports:** Documented in `bug-reports.md`
+- **Test Cases:** Documented in [Test Cases](./doc/qa/TEST_CASES.md)
+- **Bug Reports:** Documented in [Bug Report](./doc/qa/BUG_REPORT.md)
 - **Postman Reports:** Available in `postman-report.html`
 - **JMeter Reports:** Available in `jmeter-report/`
 - **Playwright Reports:** Available in `playwright-report/`
@@ -129,5 +129,3 @@ npx playwright show-report
 
 ## 📞 Contact
 For any questions or issues, reach out via [GitHub Issues](https://github.com/mobarasa/qa-assessment/issues).
-
-🚀 **Happy Testing!**
