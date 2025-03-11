@@ -1,12 +1,12 @@
 {
     "info": {
-      "_postman_id": "abcd1234-efgh-5678-ijkl-9012mnop3456",
+      "_postman_id": "jsonplaceholder-tests",
       "name": "JSONPlaceholder API Tests",
       "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
       {
-        "name": "GET Users",
+        "name": "Get Users",
         "request": {
           "method": "GET",
           "header": [],
@@ -22,12 +22,11 @@
             "listen": "test",
             "script": {
               "exec": [
-                "pm.test(\"Status code is 200\", function () {",
+                "pm.test(\"Status Code is 200\", function () {",
                 "    pm.response.to.have.status(200);",
                 "});",
-                "pm.test(\"Users list is not empty\", function () {",
-                "    let jsonData = pm.response.json();",
-                "    pm.expect(jsonData.length).to.be.above(0);",
+                "pm.test(\"Response time is within limit\", function () {",
+                "    pm.expect(pm.response.responseTime).to.be.below(2000);",
                 "});"
               ],
               "type": "text/javascript"
@@ -36,7 +35,39 @@
         ]
       },
       {
-        "name": "GET Albums",
+        "name": "Get User by ID",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/users/1",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["users", "1"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "let jsonData = pm.response.json();",
+                "pm.test(\"Status Code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "pm.test(\"Response should contain user properties\", function () {",
+                "    pm.expect(jsonData).to.have.property(\"id\");",
+                "    pm.expect(jsonData).to.have.property(\"name\");",
+                "    pm.expect(jsonData).to.have.property(\"email\");",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Get Albums",
         "request": {
           "method": "GET",
           "header": [],
@@ -52,12 +83,104 @@
             "listen": "test",
             "script": {
               "exec": [
-                "pm.test(\"Status code is 200\", function () {",
+                "pm.test(\"Status Code is 200\", function () {",
                 "    pm.response.to.have.status(200);",
                 "});",
-                "pm.test(\"Albums list is not empty\", function () {",
-                "    let jsonData = pm.response.json();",
-                "    pm.expect(jsonData.length).to.be.above(0);",
+                "pm.test(\"Response time is within limit\", function () {",
+                "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Get Album by ID",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/albums/1",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["albums", "1"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "let jsonData = pm.response.json();",
+                "pm.test(\"Status Code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "pm.test(\"Response should contain album properties\", function () {",
+                "    pm.expect(jsonData).to.have.property(\"id\");",
+                "    pm.expect(jsonData).to.have.property(\"title\");",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Get Photos",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/photos",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["photos"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status Code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "pm.test(\"Response time is within limit\", function () {",
+                "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Get Photo by ID",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/photos/1",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["photos", "1"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "let jsonData = pm.response.json();",
+                "pm.test(\"Status Code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "pm.test(\"Response should contain photo properties\", function () {",
+                "    pm.expect(jsonData).to.have.property(\"id\");",
+                "    pm.expect(jsonData).to.have.property(\"title\");",
+                "    pm.expect(jsonData).to.have.property(\"url\");",
+                "    pm.expect(jsonData).to.have.property(\"thumbnailUrl\");",
                 "});"
               ],
               "type": "text/javascript"
