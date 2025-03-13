@@ -1,113 +1,43 @@
-name: Continuous Integration and Deployment
-'on':
+name: Deploy and Test
+
+on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+
 jobs:
-  laravel-tests:
+  deploy:
     runs-on: ubuntu-latest
+
     services:
       mysql:
-        image: 'mysql:8.0'
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: cliniccarerp
+          MYSQL_DATABASE: laravel
         ports:
-          - '3306:3306'
+          - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping --silent --wait=30
-          --password=$MYSQL_ROOT_PASSWORD" --health-interval=10s
-          --health-timeout=5s --health-retries=3
+          --health-cmd="mysqladmin ping --host=localhost --user=root --password=root"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-      - name: Copy .env
-        run: 'php -r "file_exists(''.env'') || copy(''.env.example'', ''.env'');"'
-      - name: Set up environment variables
-        run: |
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=cliniccarerp" >> .env
-          echo "DB_USERNAME=root" >> .env
-          echo "DB_PASSWORD=root" >> .env
-      - name: Install Composer Dependencies
-        run: >-
-          composer install --prefer-dist --no-progress --optimize-autoloader
-          --no-interaction
-      - name: Generate Application Key
-        run: 'php artisan key:generate'
-      - name: Set Directory Permissions
-        run: chmod -R 777 storage bootstrap/cache
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      - name: Install Node Dependencies
-        run: npm install
-      - name: Build Frontend Assets
-        run: npm run build
-      - name: Migrate and Seed Database
-        run: |
-          php artisan migrate --force
-          php artisan db:seed --force
-      - name: Run Laravel Tests
-        run: php artisan test
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: public/
-  api-tests:
-    runs-on: ubuntu-latest
-    needs: laravel-tests
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Newman and HTML Reporter
-        run: npm install -g newman newman-reporter-htmlextra
-      - name: Run API Tests and Generate Report
-        run: >-
-          newman run postman/collection.json --reporters cli,htmlextra
-          --reporter-htmlextra-export postman-report.html
-      - name: Upload API Test Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: postman-html-report
-          path: postman-report.html
-  e2e-tests:
-    runs-on: ubuntu-latest
-    needs: laravel-tests
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
+          php-version: 8.2
+          extensions: mbstring, pdo, pdo_mysql, intl
+          coverage: none
 
-      - name: Install Composer Dependencies
-        run: |
-          composer install --no-progress --no-interaction --prefer-dist
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      - name: Install NPM Dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-      - name: Create SQLite Database File
-        run: |
-          mkdir -p database
-          touch database/database.sqlite
-
-      - name: Setup Laravel Environment
+      - name: Set up environment
         run: |
           cp .env.example .env
           php artisan key:generate
@@ -116,42 +46,30 @@ jobs:
           php artisan view:clear
           php artisan route:clear
 
-      - name: Check Database Connection
+      - name: Wait for MySQL to be ready
         run: |
-          php artisan migrate:status || echo "Database connection failed!"
-
-      - name: Run Database Migrations
-        run: php artisan migrate --force
-
-      - name: Fix Storage Permissions
-        run: chmod -R 777 storage bootstrap/cache
-
-      - name: Install Playwright and Browsers
-        run: |
-          npm install -D @playwright/test
-          npx playwright install --with-deps
-      - name: Start Laravel Server
-        run: >
-          php artisan serve --host=0.0.0.0 --port=8000 >
-          storage/logs/server.log 2>&1 &
-      - name: Debug Laravel Server Log
-        run: sleep 5 && cat storage/logs/server.log
-      - name: Wait for Laravel to be Ready
-        run: |
-          for i in {1..15}; do
-            if curl -sSf http://localhost:8000 > /dev/null; then
-              echo "Laravel is up!"
-              exit 0
-            fi
-            echo "Waiting for Laravel to start..."
-            sleep 2
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 --user=root --password=root --silent; then
+              echo "MySQL is up!";
+              break;
+            fi;
+            echo "Waiting for MySQL...";
+            sleep 2;
           done
-          echo "Laravel failed to start!"
-          exit 1
-      - name: Run Playwright E2E Tests
+
+      - name: Run migrations and seed database
+        run: |
+          php artisan migrate --force
+          php artisan db:seed --force
+
+      - name: Start Laravel server
+        run: php artisan serve --host=0.0.0.0 --port=8000 &
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
         run: npx playwright test
-      - name: Upload Playwright Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
+
+      - name: Stop Laravel server
+        run: pkill -f "php artisan serve"
