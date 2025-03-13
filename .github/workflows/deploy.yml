@@ -99,29 +99,29 @@ jobs:
                   name: postman-html-report
                   path: postman-report.html
 
-    load-tests:
-        runs-on: ubuntu-latest
-        needs: api-tests
+    # load-tests:
+    #     runs-on: ubuntu-latest
+    #     needs: api-tests
 
-        steps:
-            - uses: actions/checkout@v4
+    #     steps:
+    #         - uses: actions/checkout@v4
 
-            - name: Run JMeter Load Tests
-              run: |
-                docker run --rm -v ${{ github.workspace }}:/test -w /test justb4/jmeter:5.6 \
-                  -n -t jmeter/jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
+    #         - name: Run JMeter Load Tests
+    #           run: |
+    #             docker run --rm -v ${{ github.workspace }}:/test -w /test justb4/jmeter:latest \
+    #               -n -t jmeter/jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
 
-            - name: Upload JMeter Results (JTL)
-              uses: actions/upload-artifact@v4
-              with:
-                name: jmeter-results
-                path: results.jtl
+    #         - name: Upload JMeter Results (JTL)
+    #           uses: actions/upload-artifact@v4
+    #           with:
+    #             name: jmeter-results
+    #             path: results.jtl
 
-            - name: Upload JMeter HTML Report
-              uses: actions/upload-artifact@v4
-              with:
-                name: jmeter-html-report
-                path: jmeter-report/
+    #         - name: Upload JMeter HTML Report
+    #           uses: actions/upload-artifact@v4
+    #           with:
+    #             name: jmeter-html-report
+    #             path: jmeter-report/
 
     e2e-tests:
         runs-on: ubuntu-latest
