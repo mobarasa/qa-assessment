@@ -91,19 +91,19 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       - name: Install Composer Dependencies
         run: |
           composer install --no-progress --no-interaction --prefer-dist
-          cp .env.example .env
-          php artisan key:generate
-          php artisan config:clear
-          php artisan cache:clear
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
       - name: Install NPM Dependencies
         run: npm ci
+      - name: Generate Laravel application key
+        run: php artisan key:generate
       - name: Install Playwright and Browsers
         run: |
           npm install -D @playwright/test
