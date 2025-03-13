@@ -106,33 +106,22 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Install JMeter
-              run: |
-                sudo apt update
-                sudo apt install -y jmeter
-                jmeter --version
-
-            - name: Create report directory
-              run: mkdir -p jmeter-report
-
             - name: Run JMeter Load Tests
               run: |
-                jmeter -n -t jmeter/jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
-              continue-on-error: true
+                docker run --rm -v ${{ github.workspace }}:/test -w /test justb4/jmeter \
+                  -n -t jmeter/jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
 
-            - name: Debug output directories
-              run: |
-                echo "Current directory content:"
-                ls -la
-                echo "Report directory content (if exists):"
-                ls -la jmeter-report/ || echo "Directory doesn't exist or is empty"
-
-            - name: Upload JMeter Report
+            - name: Upload JMeter Results (JTL)
               uses: actions/upload-artifact@v4
               with:
-                  name: jmeter-report
-                  path: jmeter-report/
-              if: always()  # This ensures the upload step runs even if previous steps fail
+                name: jmeter-results
+                path: results.jtl
+
+            - name: Upload JMeter HTML Report
+              uses: actions/upload-artifact@v4
+              with:
+                name: jmeter-html-report
+                path: jmeter-report/
 
     e2e-tests:
         runs-on: ubuntu-latest

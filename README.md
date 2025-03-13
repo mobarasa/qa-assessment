@@ -113,6 +113,7 @@ npx playwright show-report
 
 ## 📜 Test Cases & Reports
 - **Test Cases:** Documented in [Test Cases](./docs/qa/TEST_CASES.md)
+- **API Test Cases:** Documented in [API Test Cases](./docs/qa/API_TEST_CASES.md)
 - **Bug Reports:** Documented in [Bug Report](./docs/qa/BUG_REPORT.md)
 - **Postman Reports:** Available in `postman-report.html`
 - **JMeter Reports:** Available in `jmeter-report/`

@@ -32,7 +32,7 @@ const filteredAlbums = computed(() => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Albums</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight" data-testid="albums-header">Albums</h2>
         </template>
 
         <div class="py-12">

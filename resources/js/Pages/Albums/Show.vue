@@ -21,7 +21,7 @@ const filteredPhotos = computed(() => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Album Photos</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight" data-testid="album-photos-header">Album Photos</h2>
         </template>
 
         <div class="py-12">

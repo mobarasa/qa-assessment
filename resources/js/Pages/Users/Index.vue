@@ -24,7 +24,7 @@ const filteredUsers = computed(() => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Users</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight" data-testid="users-header">Users</h2>
         </template>
 
         <div class="py-12">
