@@ -108,7 +108,7 @@ jobs:
 
             - name: Run JMeter Load Tests
               run: |
-                docker run --rm -v ${{ github.workspace }}:/test -w /test justb4/jmeter \
+                docker run --rm -v ${{ github.workspace }}:/test -w /test justb4/jmeter:5.6 \
                   -n -t jmeter/jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
 
             - name: Upload JMeter Results (JTL)
