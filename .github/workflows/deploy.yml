@@ -1,4 +1,4 @@
-name: Deploy and Test
+name: Deploy Laravel App
 
 on:
   push:
@@ -14,28 +14,28 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: laravel
+          MYSQL_DATABASE: qatest
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --host=localhost --user=root --password=root"
+        options: >
+          --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
-          extensions: mbstring, pdo, pdo_mysql, intl
+          php-version: '8.2'
+          extensions: mbstring, pdo, mysql, zip
           coverage: none
 
       - name: Install dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Set up environment
         run: |
@@ -46,30 +46,25 @@ jobs:
           php artisan view:clear
           php artisan route:clear
 
-      - name: Wait for MySQL to be ready
-        run: |
-          for i in {1..30}; do
-            if mysqladmin ping -h 127.0.0.1 --user=root --password=root --silent; then
-              echo "MySQL is up!";
-              break;
-            fi;
-            echo "Waiting for MySQL...";
-            sleep 2;
-          done
+      - name: Wait for MySQL
+        run: sleep 15
 
-      - name: Run migrations and seed database
-        run: |
-          php artisan migrate --force
-          php artisan db:seed --force
+      - name: Run migrations and seeders
+        run: php artisan migrate --seed
 
       - name: Start Laravel server
         run: php artisan serve --host=0.0.0.0 --port=8000 &
 
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
       - name: Install Playwright
-        run: npx playwright install --with-deps
+        run: npm ci && npx playwright install --with-deps
 
       - name: Run Playwright tests
         run: npx playwright test
 
-      - name: Stop Laravel server
-        run: pkill -f "php artisan serve"
+      - name: Deploy application
+        run: echo "Deployment completed!"
