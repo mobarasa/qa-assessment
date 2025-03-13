@@ -1,154 +1,134 @@
 name: Continuous Integration and Deployment
 
 on:
-    push:
-        branches:
-            - 'main'
-    pull_request:
-        branches:
-            - 'main'
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
 
 jobs:
-    laravel-tests:
-        runs-on: ubuntu-latest
+  laravel-tests:
+    runs-on: ubuntu-latest
 
-        services:
-            mysql:
-                image: mysql:8.0
-                env:
-                    MYSQL_ROOT_PASSWORD: root
-                    MYSQL_DATABASE: cliniccarerp
-                ports:
-                    - 3306:3306
-                options: >-
-                    --health-cmd="mysqladmin ping --silent --wait=30 --password=$MYSQL_ROOT_PASSWORD"
-                    --health-interval=10s
-                    --health-timeout=5s
-                    --health-retries=3
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: cliniccarerp
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent --wait=30 --password=$MYSQL_ROOT_PASSWORD"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-            - name: Set up PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: '8.2'
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
 
-            - name: Copy .env
-              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-            - name: Set up environment variables
-              run: |
-                  echo "DB_CONNECTION=mysql" >> .env
-                  echo "DB_HOST=127.0.0.1" >> .env
-                  echo "DB_PORT=3306" >> .env
-                  echo "DB_DATABASE=cliniccarerp" >> .env
-                  echo "DB_USERNAME=root" >> .env
-                  echo "DB_PASSWORD=root" >> .env
+      - name: Set up environment variables
+        run: |
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=cliniccarerp" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=root" >> .env
 
-            - name: Install Composer Dependencies
-              run: composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader --no-interaction
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-progress --optimize-autoloader --no-interaction
 
-            - name: Generate Application Key
-              run: php artisan key:generate
+      - name: Generate Application Key
+        run: php artisan key:generate
 
-            - name: Set Directory Permissions
-              run: chmod -R 777 storage bootstrap/cache
+      - name: Set Directory Permissions
+        run: chmod -R 777 storage bootstrap/cache
 
-            - name: Install Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '18'
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-            - name: Install Node Dependencies
-              run: npm install
+      - name: Install Node Dependencies
+        run: npm install
 
-            - name: Build Frontend Assets
-              run: npm run build
+      - name: Build Frontend Assets
+        run: npm run build
 
-            - name: Migrate and Seed Database
-              run: |
-                  php artisan migrate --force
-                  php artisan db:seed --force
+      - name: Migrate and Seed Database
+        run: |
+          php artisan migrate --force
+          php artisan db:seed --force
 
-            - name: Run Laravel Tests
-              run: php artisan test
+      - name: Run Laravel Tests
+        run: php artisan test
 
-            - name: Upload Artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: dist
-                  path: public/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: public/
 
-    api-tests:
-        runs-on: ubuntu-latest
-        needs: laravel-tests
+  api-tests:
+    runs-on: ubuntu-latest
+    needs: laravel-tests
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Install Newman and HTML Reporter
-              run: npm install -g newman newman-reporter-htmlextra
+      - name: Install Newman and HTML Reporter
+        run: npm install -g newman newman-reporter-htmlextra
 
-            - name: Run API Tests with Newman and Generate HTML Report
-              run: newman run postman/collection.json --reporters cli,htmlextra --reporter-htmlextra-export postman-report.html
+      - name: Run API Tests and Generate Report
+        run: newman run postman/collection.json --reporters cli,htmlextra --reporter-htmlextra-export postman-report.html
 
-            - name: Upload API Test Report (HTML)
-              uses: actions/upload-artifact@v4
-              with:
-                  name: postman-html-report
-                  path: postman-report.html
+      - name: Upload API Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-html-report
+          path: postman-report.html
 
-    # load-tests:
-    #     runs-on: ubuntu-latest
-    #     needs: api-tests
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: laravel-tests
 
-    #     steps:
-    #         - uses: actions/checkout@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    #         - name: Run JMeter Load Tests
-    #           run: |
-    #             docker run --rm -v ${{ github.workspace }}:/test -w /test justb4/jmeter:latest \
-    #               -n -t jmeter/jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-    #         - name: Upload JMeter Results (JTL)
-    #           uses: actions/upload-artifact@v4
-    #           with:
-    #             name: jmeter-results
-    #             path: results.jtl
+      - name: Install NPM Dependencies
+        run: npm ci
 
-    #         - name: Upload JMeter HTML Report
-    #           uses: actions/upload-artifact@v4
-    #           with:
-    #             name: jmeter-html-report
-    #             path: jmeter-report/
+      - name: Install Playwright and Browsers
+        run: |
+          npm install -D @playwright/test
+          npx playwright install --with-deps
 
-    e2e-tests:
-        runs-on: ubuntu-latest
-        needs: laravel-tests
+      - name: Start Laravel Server
+        run: php artisan serve --host=0.0.0.0 --port=8000 &
 
-        steps:
-            - uses: actions/checkout@v4
+      - name: Run Playwright E2E Tests
+        run: npx playwright test
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                node-version: '18'
-
-            - name: Install dependencies
-              run: npm ci
-
-            - name: Install Playwright
-              run: npm install -D @playwright/test
-
-            - name: Install Playwright browsers
-              run: npx playwright install --with-deps
-
-            - name: Run Playwright E2E Tests
-              run: npx playwright test
-
-            - name: Upload Playwright Report
-              uses: actions/upload-artifact@v4
-              with:
-                  name: playwright-report
-                  path: playwright-report/
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
