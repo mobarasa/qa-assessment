@@ -128,6 +128,22 @@ jobs:
         run: |
           timeout 30s bash -c 'until curl -sSf http://localhost:8000 > /dev/null; do sleep 2; done' || false
 
+      - name: Debug Laravel Server Log
+        run: sleep 5 && cat storage/logs/server.log
+
+      - name: Wait for Laravel to be Ready
+        run: |
+          for i in {1..15}; do
+            if curl -sSf http://localhost:8000 > /dev/null; then
+              echo "Laravel is up!"
+              exit 0
+            fi
+            echo "Waiting for Laravel to start..."
+            sleep 2
+          done
+          echo "Laravel failed to start!"
+          exit 1
+
       - name: Run Playwright E2E Tests
         run: npx playwright test
 
