@@ -139,13 +139,13 @@ jobs:
               -e -o $GITHUB_WORKSPACE/test-results/dashboard
 
     - name: Upload JTL results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: jmeter-results-jtl
         path: $GITHUB_WORKSPACE/test-results/results.jtl
 
     - name: Upload HTML dashboard
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: jmeter-dashboard
         path: $GITHUB_WORKSPACE/test-results/dashboard
