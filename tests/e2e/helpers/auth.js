@@ -7,30 +7,30 @@
  */
 const login = async (page, baseUrl, options = {}) => {
     const {
-      email = 'test@example.com',
-      password = 'password',
-      waitForDashboard = true,
-      dashboardUrl = '/dashboard',  // Laravel's default route after login
-      timeout = 30000
+        email = 'test@example.com',
+        password = 'password',
+        waitForDashboard = true,
+        dashboardUrl = '/dashboard',  // Laravel's default route after login
+        timeout = 30000
     } = options;
 
     // Handle external navigation prompts by adding a listener before login actions
-  page.on('dialog', async dialog => {
-    console.log(`Dialog message: ${dialog.message()}`);
-    await dialog.dismiss();
-  });
+    page.on('dialog', async dialog => {
+        console.log(`Dialog message: ${dialog.message()}`);
+        await dialog.dismiss();
+    });
 
-  // Block any external protocol handlers that might trigger the xdg-open prompt
-  await page.route('**/*', route => {
-    const url = route.request().url();
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return route.continue();
-    } else {
-      // Block non-http protocols
-      console.log(`Blocked navigation to: ${url}`);
-      return route.abort();
-    }
-  });
+    // Block any external protocol handlers that might trigger the xdg-open prompt
+    await page.route('**/*', route => {
+        const url = route.request().url();
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            return route.continue();
+        } else {
+            // Block non-http protocols
+            console.log(`Blocked navigation to: ${url}`);
+            return route.abort();
+        }
+    });
 
 
     // Navigate to login page (Laravel's default auth route)
@@ -46,39 +46,39 @@ const login = async (page, baseUrl, options = {}) => {
 
     // Wait for successful login if specified
     if (waitForDashboard) {
-      await page.waitForURL(`${baseUrl}${dashboardUrl}`, { timeout });
+        await page.waitForURL(`${baseUrl}${dashboardUrl}`, { timeout });
     }
 
     // Verify user is logged in
     try {
-      // This selector should be adjusted to match an element that appears on your authenticated pages
-      await page.waitForSelector('[data-testid="dashboard-header"]', {
-        timeout: 5000,
-        state: 'visible'
-      });
+        // This selector should be adjusted to match an element that appears on your authenticated pages
+        await page.waitForSelector('[data-testid="dashboard-header"]', {
+            timeout: 5000,
+            state: 'visible'
+        });
     } catch (error) {
-      console.warn('Could not verify login success by finding user menu element');
+        console.warn('Could not verify login success by finding user menu element');
     }
-  };
+};
 
-  /**
-   * Helper function to handle logout process
-   * @param {Object} page - Playwright page object
-   * @param {string} baseUrl - Base URL of the application
-   * @returns {Promise<void>}
-   */
-  const logout = async (page, baseUrl) => {
+/**
+ * Helper function to handle logout process
+ * @param {Object} page - Playwright page object
+ * @param {string} baseUrl - Base URL of the application
+ * @returns {Promise<void>}
+ */
+const logout = async (page, baseUrl) => {
     // Common Laravel logout patterns - adjust as needed for your UI
     try {
-      // Try clicking a logout button or link if available
-      await page.click('[data-testid="logout-button"], .logout-link, a:text("Logout")');
+        // Try clicking a logout button or link if available
+        await page.click('[data-testid="logout-button"], .logout-link, a:text("Logout")');
     } catch (error) {
-      // Fallback: visit the logout route directly
-      await page.goto(`${baseUrl}/logout`);
+        // Fallback: visit the logout route directly
+        await page.goto(`${baseUrl}/logout`);
     }
 
     // Verify logout by checking for login page or redirect
     await page.waitForURL(`${baseUrl}/login`);
-  };
+};
 
-  export { login, logout };
+export { login, logout };
