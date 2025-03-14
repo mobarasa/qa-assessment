@@ -107,3 +107,46 @@ jobs:
               with:
                   name: postman-html-report
                   path: postman-report.html
+
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: newman-api-tests
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Download and setup Apache JMeter
+      run: |
+        wget https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
+        tar -xzf apache-jmeter-5.6.3.tgz
+        echo "JMETER_HOME=$GITHUB_WORKSPACE/apache-jmeter-5.6.3" >> $GITHUB_ENV
+        echo "$GITHUB_WORKSPACE/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
+
+    - name: Run JMeter Tests
+      run: |
+        mkdir -p $GITHUB_WORKSPACE/test-results
+
+        # Run JMeter test in non-GUI mode
+        jmeter -n -t $GITHUB_WORKSPACE/jmeter/jsonplaceholder_test_fixed.jmx \
+              -l $GITHUB_WORKSPACE/test-results/results.jtl \
+              -e -o $GITHUB_WORKSPACE/test-results/dashboard
+
+    - name: Upload JTL results
+      uses: actions/upload-artifact@v3
+      with:
+        name: jmeter-results-jtl
+        path: $GITHUB_WORKSPACE/test-results/results.jtl
+
+    - name: Upload HTML dashboard
+      uses: actions/upload-artifact@v3
+      with:
+        name: jmeter-dashboard
+        path: $GITHUB_WORKSPACE/test-results/dashboard
+
