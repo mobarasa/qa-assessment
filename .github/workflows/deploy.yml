@@ -134,7 +134,7 @@ jobs:
         mkdir -p test-results
 
         # Run JMeter test in non-GUI mode
-        jmeter -n -t ./jmeter/dummy_test.jmx \
+        jmeter -n -t ./jmeter/performance_test.jmx \
               -l ./test-results/results.jtl \
               -e -o ./test-results/dashboard
 

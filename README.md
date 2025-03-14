@@ -68,7 +68,7 @@ newman run postman/collection.json --reporters cli
 ## 🔥 Load Testing (JMeter)
 ### 📥 Run JMeter Load Tests
 ```sh
-jmeter -n -t jmeter/jsonplaceholder_test.jmx -l results.jtl -e -o jmeter-report/
+jmeter -n -t jmeter/performance_test.jmx -l results.jtl -e -o jmeter-report/
 ```
 ### 📊 Performance Metrics:
 - **Response Time:** Time taken per request
