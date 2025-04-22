@@ -35,7 +35,8 @@ class JsonPlaceholderService
     public function getUser($id)
     {
         return Cache::remember("user_{$id}", 3600, function () use ($id) {
-            return Http::get("{$this->baseUrl}/users/{$id}")->json();
+            // return Http::get("{$this->baseUrl}/users/{$id}")->json();
+            return Http::timeout(30)->get("{$this->baseUrl}/users/{$id}")->json();
         });
     }
 

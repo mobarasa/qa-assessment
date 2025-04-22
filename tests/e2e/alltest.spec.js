@@ -35,7 +35,7 @@ test('Should be able to access users page, search for a user and view their user
     await page.getByRole('link', { name: 'View Details' }).click();
     await expect(
         page.getByRole('heading', { name: 'Patricia Lebsack', exact: true })
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 10000 });
 });
 
 // Album module

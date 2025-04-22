@@ -85,6 +85,7 @@ npm install -D @playwright/test
 ### 🏃 Run Playwright Tests
 ```sh
 npx playwright test
+npx playwright test --ui
 ```
 ### 📊 Playwright Test Report
 ```sh
