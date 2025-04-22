@@ -80,6 +80,72 @@
             ]
         },
         {
+            "name": "Get Non-existent User",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "https://jsonplaceholder.typicode.com/users/999",
+                    "protocol": "https",
+                    "host": [
+                        "jsonplaceholder",
+                        "typicode",
+                        "com"
+                    ],
+                    "path": [
+                        "users",
+                        "999"
+                    ]
+                }
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status Code is 404 for non-existent user\", function () {",
+                            "    pm.response.to.have.status(404);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Get User with Invalid ID Format",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "https://jsonplaceholder.typicode.com/users/abc",
+                    "protocol": "https",
+                    "host": [
+                        "jsonplaceholder",
+                        "typicode",
+                        "com"
+                    ],
+                    "path": [
+                        "users",
+                        "abc"
+                    ]
+                }
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status Code for invalid ID format\", function () {",
+                            "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
             "name": "Get Albums",
             "request": {
                 "method": "GET",
